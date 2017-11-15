@@ -2,17 +2,18 @@ package org.ulco;
 
 import java.util.Vector;
 
-public class Group {
+public class Group extends GraphicsObject {
+
+    private int m_ID;
+    private Vector<GraphicsObject> m_objectList;
 
     public Group() {
-        m_groupList = new  Vector<Group>();
-        m_objectList = new Vector<GraphicsObject>();
+        m_objectList = new Vector<>();
         m_ID = ++ID.ID;
     }
 
     public Group(String json) {
-        m_groupList = new  Vector<Group>();
-        m_objectList = new Vector<GraphicsObject>();
+        m_objectList = new Vector<>();
         String str = json.replaceAll("\\s+","");
         int objectsIndex = str.indexOf("objects");
         int groupsIndex = str.indexOf("groups");
@@ -23,19 +24,9 @@ public class Group {
     }
 
     public void add(Object object) {
-        if (object instanceof Group) {
-            addGroup((Group)object);
-        } else {
-            addObject((GraphicsObject)object);
+        if (object instanceof GraphicsObject) {
+            m_objectList.add((GraphicsObject) object);
         }
-    }
-
-    private void addGroup(Group group) {
-        m_groupList.add(group);
-    }
-
-    private void addObject(GraphicsObject object) {
-        m_objectList.add(object);
     }
 
     public Group copy() {
@@ -43,14 +34,9 @@ public class Group {
 
         for (Object o : m_objectList) {
             GraphicsObject element = (GraphicsObject) (o);
-
-            g.addObject(element.copy());
+            g.add(element.copy());
         }
-        for (Object o : m_groupList) {
-            Group element = (Group) (o);
 
-            g.addGroup(element.copy());
-        }
         return g;
     }
 
@@ -58,17 +44,19 @@ public class Group {
         return m_ID;
     }
 
-    public void move(Point delta) {
-        Group g = new Group();
+    @Override
+    boolean isClosed(Point pt, double distance) {
+        for (GraphicsObject go : m_objectList) {
+            if (!go.isClosed(pt, distance))
+                return false;
+        }
 
+        return true;
+    }
+
+    public void move(Point delta) {
         for (Object o : m_objectList) {
             GraphicsObject element = (GraphicsObject) (o);
-
-            element.move(delta);
-        }
-        for (Object o : m_groupList) {
-            Group element = (Group) (o);
-
             element.move(delta);
         }
     }
@@ -108,7 +96,8 @@ public class Group {
             } else {
                 groupStr = groupsStr.substring(0, separatorIndex);
             }
-            m_groupList.add(JSON.parseGroup(groupStr));
+
+            m_objectList.add(JSON.parseGroup(groupStr));
             if (separatorIndex == -1) {
                 groupsStr = "";
             } else {
@@ -137,59 +126,64 @@ public class Group {
     }
 
     public int size() {
-        int size = m_objectList.size();
+        int size = 0;
 
-        for (int i = 0; i < m_groupList.size(); ++i) {
-            Group element = m_groupList.elementAt(i);
+        for (GraphicsObject go : m_objectList)
+            size += go.size();
 
-            size += element.size();
-        }
         return size;
     }
 
+    private void removeLastComma(StringBuilder sb) {
+        int index = sb.lastIndexOf(",");
+        sb.replace(index, sb.length(), "");
+    }
+
     public String toJson() {
-        String str = "{ type: group, objects : { ";
+        StringBuilder finalBuffer = new StringBuilder("{ type: group, objects : { ");
+        StringBuilder groupsBuffer = new StringBuilder(" }, groups : { ");
 
         for (int i = 0; i < m_objectList.size(); ++i) {
             GraphicsObject element = m_objectList.elementAt(i);
 
-            str += element.toJson();
-            if (i < m_objectList.size() - 1) {
-                str += ", ";
+            if (element.isGroup()) {
+                groupsBuffer.append(element.toJson());
+            } else {
+                finalBuffer.append(element.toJson() + ", ");
             }
         }
-        str += " }, groups : { ";
 
-        for (int i = 0; i < m_groupList.size(); ++i) {
-            Group element = m_groupList.elementAt(i);
+        removeLastComma(finalBuffer);
 
-            str += element.toJson();
-        }
-        return str + " } }";
+        finalBuffer.append(groupsBuffer.toString() + " } }");
+        return finalBuffer.toString();
     }
 
     public String toString() {
-        String str = "group[[";
+        StringBuilder builder = new StringBuilder("group[[");
+        StringBuilder objectsBuilder = new StringBuilder();
+        StringBuilder groupBuilder = new StringBuilder();
 
         for (int i = 0; i < m_objectList.size(); ++i) {
             GraphicsObject element = m_objectList.elementAt(i);
 
-            str += element.toString();
-            if (i < m_objectList.size() - 1) {
-                str += ", ";
+            if (element.isGroup()) {
+                groupBuilder.append(element.toString());
+            } else {
+                objectsBuilder.append(element.toString() + ", ");
             }
         }
-        str += "],[";
 
-        for (int i = 0; i < m_groupList.size(); ++i) {
-            Group element = m_groupList.elementAt(i);
+        removeLastComma(objectsBuilder);
 
-            str += element.toString();
-        }
-        return str + "]]";
+        builder.append(objectsBuilder.toString());
+        builder.append("],[");
+        builder.append(groupBuilder.toString());
+        builder.append("]]");
+
+        return builder.toString();
     }
 
-    private Vector<Group> m_groupList;
-    private Vector<GraphicsObject> m_objectList;
-    private int m_ID;
+    @Override
+    public boolean isGroup() { return true; }
 }
