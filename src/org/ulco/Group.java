@@ -9,7 +9,7 @@ public class Group extends GraphicsObject {
 
     public Group() {
         m_objectList = new Vector<>();
-        m_ID = ++ID.ID;
+        m_ID = ID.getInstance().generateId();
     }
 
     public Group(String json) {

@@ -4,7 +4,7 @@ abstract public class GraphicsObject {
     private int m_ID;
 
     public GraphicsObject() {
-        m_ID = ++ID.ID;
+        m_ID = ID.getInstance().generateId();
     }
 
     abstract public GraphicsObject copy();
