@@ -1,5 +1,7 @@
 package org.ulco;
 
+import java.util.Vector;
+
 abstract public class GraphicsObject {
     private int m_ID;
 
@@ -20,6 +22,12 @@ abstract public class GraphicsObject {
     abstract public String toJson();
 
     abstract public String toString();
+
+    public void addIfClosed(Vector<GraphicsObject> v, Point pt, double distance) {
+        if (!isGroup() && isClosed(pt, distance)) {
+            v.add(this);
+        }
+    }
 
     public boolean isGroup() { return false; }
 

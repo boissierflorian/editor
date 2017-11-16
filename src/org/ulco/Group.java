@@ -186,4 +186,11 @@ public class Group extends GraphicsObject {
 
     @Override
     public boolean isGroup() { return true; }
+
+    @Override
+    public void addIfClosed(Vector<GraphicsObject> v, Point pt, double distance) {
+        for (GraphicsObject go : m_objectList) {
+            go.addIfClosed(v, pt, distance);
+        }
+    }
 }

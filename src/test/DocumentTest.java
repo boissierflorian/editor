@@ -48,7 +48,7 @@ public class DocumentTest extends TestCase {
         layer.add(group);
         layer.add(c);
 
-        assertEquals(3, GraphicsObjectUtils.select(document, new Point(1, 1), 8).size());
+        assertEquals(3, GraphicsObjectUtils.select(document, new Point(1, 1), 9.5).size());
     }
 
     @Test

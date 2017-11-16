@@ -18,10 +18,9 @@ public class GraphicsObjectUtils {
         GraphicsObjects list = new GraphicsObjects();
 
         for (GraphicsObject object : layer.getListe()) {
-            if (object.isClosed(pt, distance)) {
-                list.add(object);
-            }
+            object.addIfClosed(list, pt, distance);
         }
+
         return list;
     }
 }
