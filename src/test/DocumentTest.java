@@ -32,6 +32,26 @@ public class DocumentTest extends TestCase {
     }
 
     @Test
+    public void testSelect3() throws Exception {
+        Document document = new Document();
+        Layer layer = document.createLayer();
+        Square square = new Square(new Point(0, 0), 5);
+        Rectangle rectangle = new Rectangle(new Point(50, 50), 5, 10);
+        Rectangle rectangle2 = new Rectangle(new Point(5, 5), 5, 5);
+        Group group = new Group();
+        Circle c = new Circle(new Point(3, 3), 3);
+
+        group.add(square);
+        group.add(rectangle);
+        group.add(rectangle2);
+
+        layer.add(group);
+        layer.add(c);
+
+        assertEquals(3, GraphicsObjectUtils.select(document, new Point(1, 1), 8).size());
+    }
+
+    @Test
     public void testJSON() throws Exception {
         Document document = new Document();
         Layer l1 = document.createLayer();
