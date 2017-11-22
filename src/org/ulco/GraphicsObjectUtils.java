@@ -1,8 +1,5 @@
 package org.ulco;
 
-
-import java.util.Vector;
-
 public class GraphicsObjectUtils {
     public static GraphicsObjects select(Document document, Point pt, double distance) {
         GraphicsObjects list = new GraphicsObjects();
