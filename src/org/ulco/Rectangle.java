@@ -1,7 +1,5 @@
 package org.ulco;
 
-import sun.security.util.Resources_zh_CN;
-
 public class Rectangle extends GraphicsObject {
     public Rectangle() {
         this(new Point(0,0), 1, 1);

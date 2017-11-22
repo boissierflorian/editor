@@ -40,46 +40,15 @@ public class Group extends Container {
 
     @Override
     public void parseGroups(String groupsStr) {
-        while (!groupsStr.isEmpty()) {
-            int separatorIndex = StringUtils.searchSeparator(groupsStr);
-            String groupStr;
-
-            if (separatorIndex == -1) {
-                groupStr = groupsStr;
-            } else {
-                groupStr = groupsStr.substring(0, separatorIndex);
-            }
-
-            m_liste.add(JSON.parseGroup(groupStr));
-            if (separatorIndex == -1) {
-                groupsStr = "";
-            } else {
-                groupsStr = groupsStr.substring(separatorIndex + 1);
-            }
-        }
+        m_parser.parse(m_liste, groupsStr, JSON::parseGroup);
     }
-
-    public void parseObjects(String objectsStr) {
-        m_parser.parseObjects(m_liste, objectsStr);
-    }
-
 
     @Override
     public String toJson() {
         StringBuilder finalBuffer = new StringBuilder("{ type: group, objects : { ");
         StringBuilder groupsBuffer = new StringBuilder(" }, groups : { ");
 
-        for (int i = 0; i < m_liste.size(); ++i) {
-            GraphicsObject element = m_liste.elementAt(i);
-
-            if (element.isGroup()) {
-                groupsBuffer.append(element.toJson());
-            } else {
-                finalBuffer.append(element.toJson() + ", ");
-            }
-        }
-
-        StringUtils.removeLastComma(finalBuffer);
+        JSON.fillBuilders(groupsBuffer, finalBuffer, m_liste, GraphicsObject::toJson);
 
         finalBuffer.append(groupsBuffer.toString() + " } }");
         return finalBuffer.toString();

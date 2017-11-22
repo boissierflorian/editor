@@ -1,16 +1,21 @@
 package org.ulco;
 
 import java.util.Vector;
+import java.util.Collections;
 
 public class Document {
     private Vector<Layer> m_layers;
+    private Parser m_parser;
 
     public Document() {
         m_layers = new Vector<Layer>();
+        m_parser = new Parser();
     }
 
     public Document(String json) {
         m_layers = new Vector<Layer>();
+        m_parser = new Parser();
+
         String str = json.replaceAll("\\s+", "");
         int layersIndex = str.indexOf("layers");
         int endIndex = str.lastIndexOf("}");
@@ -39,36 +44,11 @@ public class Document {
     }
 
     private void parseLayers(String layersStr) {
-        while (!layersStr.isEmpty()) {
-            int separatorIndex = StringUtils.searchSeparator(layersStr);
-            String layerStr;
-
-            if (separatorIndex == -1) {
-                layerStr = layersStr;
-            } else {
-                layerStr = layersStr.substring(0, separatorIndex);
-            }
-            m_layers.add(JSON.parseLayer(layerStr));
-            if (separatorIndex == -1) {
-                layersStr = "";
-            } else {
-                layersStr = layersStr.substring(separatorIndex + 1);
-            }
-        }
+        m_parser.parse(m_layers, layersStr, JSON::parseLayer);
     }
 
     public String toJson() {
-        String str = "{ type: document, layers: { ";
-
-        for (int i = 0; i < m_layers.size(); ++i) {
-            Layer element = m_layers.elementAt(i);
-
-            str += element.toJson();
-            if (i < m_layers.size() - 1) {
-                str += ", ";
-            }
-        }
-        return str + " } }";
+        return "{ type: document, layers: { " + JSON.createJsonFromList(m_layers) + " } }";
     }
 
     public Vector<Layer> getLayers() {

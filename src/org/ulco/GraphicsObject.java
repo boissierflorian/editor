@@ -2,7 +2,7 @@ package org.ulco;
 
 import java.util.Vector;
 
-abstract public class GraphicsObject {
+abstract public class GraphicsObject implements JsonSerializable {
     private int m_ID;
 
     public GraphicsObject() {

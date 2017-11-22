@@ -18,7 +18,10 @@ public abstract class Container extends GraphicsObject {
 
     protected abstract void parse(String json);
     public abstract void parseGroups(String groups);
-    public abstract void parseObjects(String objects);
+
+    protected void parseObjects(String objects) {
+        m_parser.parse(m_liste, objects, JSON::parse);
+    }
 
 
     public void add(Object o) {

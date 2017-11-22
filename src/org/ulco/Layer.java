@@ -20,27 +20,12 @@ public class Layer extends Container {
     }
 
     @Override
-    public void parseObjects(String objectsStr) {
-        m_parser.parseObjects(m_liste, objectsStr);
-    }
-
-    @Override
     public void parseGroups(String groups) {
 
     }
 
     public String toJson() {
-        String str = "{ type: layer, objects : { ";
-
-        for (int i = 0; i < m_liste.size(); ++i) {
-            GraphicsObject element = m_liste.elementAt(i);
-
-            str += element.toJson();
-            if (i < m_liste.size() - 1) {
-                str += ", ";
-            }
-        }
-        return str + " } }";
+        return "{ type: layer, objects : { " + JSON.createJsonFromList(m_liste) + " } }";
     }
 
     public String toString() {
