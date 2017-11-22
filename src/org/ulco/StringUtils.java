@@ -31,4 +31,9 @@ public class StringUtils {
         for (String s : args)
             sb.append(s);
     }
+
+    public static void removeLastComma(StringBuilder sb) {
+        int index = sb.lastIndexOf(",");
+        sb.replace(index, sb.length(), "");
+    }
 }

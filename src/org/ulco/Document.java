@@ -1,11 +1,9 @@
 package org.ulco;
 
-import java.util.Iterator;
 import java.util.Vector;
 
 public class Document {
     private Vector<Layer> m_layers;
-
 
     public Document() {
         m_layers = new Vector<Layer>();
